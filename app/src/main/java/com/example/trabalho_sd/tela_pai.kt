@@ -6,47 +6,44 @@ import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
-import androidx.appcompat.app.AppCompatActivity
+import android.location.LocationRequest
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.common.GoogleApiAvailability
+import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import java.util.Locale
 
-private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-private lateinit var lat: TextView
-private lateinit var long: TextView
-private lateinit var cidade: TextView
-private lateinit var botao: Button
-var PERMISSION_ID=1010
 
-class tela_filho : AppCompatActivity() {
+class tela_pai : AppCompatActivity() {
+
+    var PERMISSION_ID=1010
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var coordPai: TextView
+    private lateinit var botao: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_tela_filho)
-        fusedLocationProviderClient= LocationServices.getFusedLocationProviderClient(this)
-        lat = findViewById(R.id.altitude)
-        long = findViewById(R.id.longitude)
-        cidade = findViewById(R.id.cidade)
-        botao = findViewById(R.id.botao)
-        botao.setOnClickListener{
+        setContentView(R.layout.activity_tela_pai)
 
+
+        fusedLocationProviderClient= LocationServices.getFusedLocationProviderClient(this)
+        coordPai = findViewById(R.id.coordPai)
+        botao = findViewById(R.id.pingFilho)
+        botao.setOnClickListener{
             Log.d("Debug:",checkPermission().toString())
             Log.d("Debug:",isLocationEnabled().toString())
             RequestPermission()
             getLastLocation()
 
         }
-
-
     }
-
 
     private fun checkPermission():Boolean{
         return !(ContextCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -63,9 +60,7 @@ class tela_filho : AppCompatActivity() {
                         Toast.makeText(this,"Localização nula",Toast.LENGTH_SHORT).show()
                     }else{
                         Log.d("Debug:" ,"Your Location:"+ location.longitude)
-                        lat.text = "latitude: "+ location.latitude
-                        long.text = "longitude: "+ location.longitude
-                        cidade.text = "cidade: "+ getCityName(location.latitude,location.longitude)
+                        coordPai.text = "Coordenadas atuais: ("+ location.longitude + "," + location.latitude + ")\n" + getCityName(location.latitude,location.longitude)
                     }
                 }
             }else{
@@ -102,8 +97,7 @@ class tela_filho : AppCompatActivity() {
     private fun isLocationEnabled():Boolean{
 
         var locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
-            LocationManager.NETWORK_PROVIDER)
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
 
     override fun onRequestPermissionsResult(

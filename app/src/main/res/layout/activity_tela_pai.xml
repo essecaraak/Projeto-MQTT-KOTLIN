@@ -4,51 +4,51 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".tela_filho">
+    tools:context=".tela_pai">
 
     <TextView
-        android:id="@+id/altitude"
+        android:id="@+id/coordPai"
+        android:layout_width="341dp"
+        android:layout_height="31dp"
+        android:text="coordenadas atuais:"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.685"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.09" />
+
+    <TextView
+        android:id="@+id/coordFilho"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="altitude"
+        android:text="coordenadas do filho:"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.173"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.181" />
+
+    <Button
+        android:id="@+id/pingFilho"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="pingar localização de filho"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/longitude"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="longitude"
+        android:id="@+id/raioLocalFilho"
+        android:layout_width="294dp"
+        android:layout_height="19dp"
+        android:text="Seu filho está num raio de X metros"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.41"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.546" />
-
-    <Button
-        android:id="@+id/botao"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="encontrar coordenadas"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.421" />
-
-    <TextView
-        android:id="@+id/cidade"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="cidade"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.605" />
-
+        app:layout_constraintVertical_bias="0.275" />
 </androidx.constraintlayout.widget.ConstraintLayout>

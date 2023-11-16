@@ -16,15 +16,26 @@ class MainActivity : AppCompatActivity() {
         filho=findViewById(R.id.filho)
         pai=findViewById(R.id.pai)
         pai.setOnClickListener{
+            Toast.makeText(this,"foi",Toast.LENGTH_SHORT).show()
+            try {
+                telaPai()
+            }catch (e:Exception){
+                e.printStackTrace()
+            }
+
 
         }
         filho.setOnClickListener{
-            Toast.makeText(this,"deu certo", Toast.LENGTH_LONG).show()
+
             telaFilho()
         }
     }
     private fun telaFilho(){
         val telaFilho = Intent(this,tela_filho::class.java)
         startActivity(telaFilho)
+    }
+    private fun telaPai(){
+        val telaPai = Intent(this,tela_pai::class.java)
+        startActivity(telaPai)
     }
 }
