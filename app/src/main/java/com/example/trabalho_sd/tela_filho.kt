@@ -17,7 +17,16 @@ import androidx.core.content.ContextCompat
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import org.eclipse.paho.android.service.MqttAndroidClient
+import org.eclipse.paho.client.mqttv3.IMqttActionListener
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
+import org.eclipse.paho.client.mqttv3.IMqttToken
+import org.eclipse.paho.client.mqttv3.MqttCallback
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions
+import org.eclipse.paho.client.mqttv3.MqttException
+import org.eclipse.paho.client.mqttv3.MqttMessage
 import java.util.Locale
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 private lateinit var lat: TextView
@@ -25,6 +34,8 @@ private lateinit var long: TextView
 private lateinit var cidade: TextView
 private lateinit var botao: Button
 var PERMISSION_ID=1010
+private lateinit var mqttClient: MqttAndroidClient
+private  var TAG="mqtt"
 
 class tela_filho : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,10 +48,11 @@ class tela_filho : AppCompatActivity() {
         botao = findViewById(R.id.botao)
         botao.setOnClickListener{
 
-            Log.d("Debug:",checkPermission().toString())
+            /*Log.d("Debug:",checkPermission().toString())
             Log.d("Debug:",isLocationEnabled().toString())
             RequestPermission()
-            getLastLocation()
+            getLastLocation()*/
+            connect(this)
 
         }
 
@@ -48,6 +60,111 @@ class tela_filho : AppCompatActivity() {
     }
 
 
+    fun connect(context: Context) {
+        val serverURI = "ssl://98cd16df796649f1adfc7b75bfc7f977.s2.eu.hivemq.cloud:8883"
+        var recCount = 0
+        mqttClient = MqttAndroidClient(context, serverURI, "kotlin_client")
+        mqttClient.setCallback(object : MqttCallback {
+            override fun messageArrived(topic: String?, message: MqttMessage?) {
+                recCount = recCount + 1
+                Log.d(TAG, "Received message ${recCount}: ${message.toString()} from topic: $topic")
+            }
+
+            override fun connectionLost(cause: Throwable?) {
+                Log.d(TAG, "Connection lost ${cause.toString()}")
+            }
+
+            override fun deliveryComplete(token: IMqttDeliveryToken?) {
+
+            }
+        })
+        val options = MqttConnectOptions()
+        options.userName = "TrabalhoSD"
+        options.password = "maltar123".toCharArray()
+        try {
+            mqttClient.connect(options, null, object : IMqttActionListener {
+                override fun onSuccess(asyncActionToken: IMqttToken?) {
+                    Log.d(TAG, "Connection success")
+                    subscribe("teste")
+                    publish("teste}", "conexãofoi")
+
+                }
+
+                override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
+                    Log.d(TAG, "Connection failure")
+                }
+            })
+        } catch (e: MqttException) {
+            e.printStackTrace()
+        }
+
+    }
+    fun subscribe(topic: String, qos: Int = 1) {
+        try {
+            mqttClient.subscribe(topic, qos, null, object : IMqttActionListener {
+                override fun onSuccess(asyncActionToken: IMqttToken?) {
+                    Log.d(TAG, "Subscribed to $topic")
+                }
+
+                override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
+                    Log.d(TAG, "Failed to subscribe $topic")
+                }
+            })
+        } catch (e: MqttException) {
+            e.printStackTrace()
+        }
+    }
+
+    fun unsubscribe(topic: String) {
+        try {
+            mqttClient.unsubscribe(topic, null, object : IMqttActionListener {
+                override fun onSuccess(asyncActionToken: IMqttToken?) {
+                    Log.d(TAG, "Unsubscribed to $topic")
+                }
+
+                override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
+                    Log.d(TAG, "Failed to unsubscribe $topic")
+                }
+            })
+        } catch (e: MqttException) {
+            e.printStackTrace()
+        }
+    }
+
+    fun publish(topic: String, msg: String, qos: Int = 1, retained: Boolean = false) {
+        try {
+            val message = MqttMessage()
+            message.payload = msg.toByteArray()
+            message.qos = qos
+            message.isRetained = retained
+            mqttClient.publish(topic, message, null, object : IMqttActionListener {
+                override fun onSuccess(asyncActionToken: IMqttToken?) {
+                    Log.d(TAG, "$msg published to $topic")
+                }
+
+                override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
+                    Log.d(TAG, "Failed to publish $msg to $topic")
+                }
+            })
+        } catch (e: MqttException) {
+            e.printStackTrace()
+        }
+    }
+    fun disconnect() {
+        try {
+            mqttClient.disconnect(null, object : IMqttActionListener {
+                override fun onSuccess(asyncActionToken: IMqttToken?) {
+                    Log.d(TAG, "Disconnected")
+                }
+
+                override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
+                    Log.d(TAG, "Failed to disconnect")
+                }
+            })
+        } catch (e: MqttException) {
+            e.printStackTrace()
+        }
+    }
     private fun checkPermission():Boolean{
         return !(ContextCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_FINE_LOCATION)

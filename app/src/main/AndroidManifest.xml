@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -17,6 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Trabalho_sd"
         tools:targetApi="31">
+        <service android:name="org.eclipse.paho.android.service.MqttService" />
         <activity
             android:name=".tela_pai"
             android:exported="false" />
