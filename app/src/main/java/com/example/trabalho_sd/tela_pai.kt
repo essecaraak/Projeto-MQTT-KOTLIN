@@ -34,6 +34,7 @@ class tela_pai : AppCompatActivity() {
     var PERMISSION_ID=1010
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var coordPai: TextView
+    private lateinit var coordFilho: TextView
     private lateinit var botao: Button
     private lateinit var mqttClient: MqttAndroidClient
     private  var TAG="mqtt"
@@ -45,10 +46,11 @@ class tela_pai : AppCompatActivity() {
 
         fusedLocationProviderClient= LocationServices.getFusedLocationProviderClient(this)
         coordPai = findViewById(R.id.coordPai)
+        coordFilho = findViewById(R.id.coordFilho)
         botao = findViewById(R.id.pingFilho)
         botao.setOnClickListener{
             connect(this)
-            subscribe("filho1")
+
             Log.d("Debug:",checkPermission().toString())
             Log.d("Debug:",isLocationEnabled().toString())
             RequestPermission()
@@ -65,6 +67,10 @@ class tela_pai : AppCompatActivity() {
             override fun messageArrived(topic: String?, message: MqttMessage?) {
                 recCount = recCount + 1
                 Log.d(TAG, "Received message ${recCount}: ${message.toString()} from topic: $topic")
+                if(topic=="filho1"){
+                    coordFilho.text="coordenadas do filho: ${message.toString()}"
+
+                }
             }
 
             override fun connectionLost(cause: Throwable?) {
@@ -83,6 +89,7 @@ class tela_pai : AppCompatActivity() {
                 override fun onSuccess(asyncActionToken: IMqttToken?) {
                     Log.d(TAG, "Connection success")
                     subscribe("teste")
+                    subscribe("filho1")
                     publish("teste", "conexãofoi")
 
                 }

@@ -48,6 +48,7 @@ class tela_filho : AppCompatActivity() {
         botao = findViewById(R.id.botao)
         botao.setOnClickListener{
             connect(this)
+
             Log.d("Debug:",checkPermission().toString())
             Log.d("Debug:",isLocationEnabled().toString())
             RequestPermission()
@@ -86,6 +87,7 @@ class tela_filho : AppCompatActivity() {
                 override fun onSuccess(asyncActionToken: IMqttToken?) {
                     Log.d(TAG, "Connection success")
                     subscribe("teste")
+                    subscribe("filho1")
                     publish("teste}", "conexãofoi")
 
                 }
