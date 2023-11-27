@@ -60,7 +60,7 @@ class tela_filho : AppCompatActivity() {
     }
 
 
-    fun connect(context: Context) {
+    fun connect(context: Context) { //não mudie nada e funcinou kkkkk
         val serverURI = "ssl://98cd16df796649f1adfc7b75bfc7f977.s2.eu.hivemq.cloud:8883"
         var recCount = 0
         mqttClient = MqttAndroidClient(context, serverURI, "kotlin_client")
