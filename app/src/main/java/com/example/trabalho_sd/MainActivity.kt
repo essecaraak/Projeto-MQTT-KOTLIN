@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
             telaFilho()
         }
     }
+
     private fun telaFilho(){
         val telaFilho = Intent(this,tela_filho::class.java)
         startActivity(telaFilho)

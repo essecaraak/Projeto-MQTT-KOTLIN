@@ -47,12 +47,12 @@ class tela_filho : AppCompatActivity() {
         cidade = findViewById(R.id.cidade)
         botao = findViewById(R.id.botao)
         botao.setOnClickListener{
-
-            /*Log.d("Debug:",checkPermission().toString())
+            connect(this)
+            Log.d("Debug:",checkPermission().toString())
             Log.d("Debug:",isLocationEnabled().toString())
             RequestPermission()
-            getLastLocation()*/
-            connect(this)
+            getLastLocation()
+
 
         }
 
@@ -183,6 +183,7 @@ class tela_filho : AppCompatActivity() {
                         lat.text = "latitude: "+ location.latitude
                         long.text = "longitude: "+ location.longitude
                         cidade.text = "cidade: "+ getCityName(location.latitude,location.longitude)
+                        publish("filho1",""+location.latitude+","+location.longitude)
                     }
                 }
             }else{
