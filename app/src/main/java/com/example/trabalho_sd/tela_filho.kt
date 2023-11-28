@@ -1,5 +1,6 @@
 package com.example.trabalho_sd
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
@@ -133,7 +134,7 @@ class tela_filho : AppCompatActivity() {
         }
     }
 
-    fun publish(topic: String, msg: String, qos: Int = 1, retained: Boolean = false) {
+    /*fun publish(topic: String, msg: String, qos: Int = 1, retained: Boolean = false) {
         try {
             val message = MqttMessage()
             message.payload = msg.toByteArray()
@@ -151,7 +152,33 @@ class tela_filho : AppCompatActivity() {
         } catch (e: MqttException) {
             e.printStackTrace()
         }
+    } */
+
+    fun publish(topic: String, msg: String, qos: Int = 1, retained: Boolean = false) {
+        if (::mqttClient.isInitialized && mqttClient.isConnected) { // Verifica se mqttClient está inicializado e conectado
+            try {
+                // Se estiver inicializado e conectado, então publica a mensagem
+                val message = MqttMessage()
+                message.payload = msg.toByteArray()
+                message.qos = qos
+                message.isRetained = retained
+                mqttClient.publish(topic, message, null, object : IMqttActionListener {
+                    override fun onSuccess(asyncActionToken: IMqttToken?) {
+                        Log.d(TAG, "$msg published to $topic")
+                    }
+
+                    override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
+                        Log.d(TAG, "Failed to publish $msg to $topic")
+                    }
+                })
+            } catch (e: MqttException) {
+                e.printStackTrace()
+            }
+        } else {
+            Log.d(TAG, "mqttClient is not initialized or not connected")
+        }
     }
+
     fun disconnect() {
         try {
             mqttClient.disconnect(null, object : IMqttActionListener {
@@ -168,8 +195,9 @@ class tela_filho : AppCompatActivity() {
         }
     }
     private fun checkPermission():Boolean{
-        return !(ContextCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_FINE_LOCATION)
+        return !(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this,
+            Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED)
     }
     @SuppressLint("MissingPermission")
@@ -235,13 +263,13 @@ class tela_filho : AppCompatActivity() {
     private fun RequestPermission(){
         ActivityCompat.requestPermissions(
             this,
-            arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION,android.Manifest.permission.ACCESS_FINE_LOCATION),
+            arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION),
             PERMISSION_ID
         )
     }
     private fun isLocationEnabled():Boolean{
 
-        var locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        var locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
             LocationManager.NETWORK_PROVIDER)
     }
