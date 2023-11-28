@@ -62,7 +62,7 @@ class tela_filho : AppCompatActivity() {
 
 
     fun connect(context: Context) { //não mudie nada e funcinou kkkkk
-        val serverURI = "ssl://98cd16df796649f1adfc7b75bfc7f977.s2.eu.hivemq.cloud:8883"
+        val serverURI = "ssl://e59f8ed61b8e47abb5e1752437996eda.s2.eu.hivemq.cloud:8883"
         var recCount = 0
         mqttClient = MqttAndroidClient(context, serverURI, "kotlin_client")
         mqttClient.setCallback(object : MqttCallback {
@@ -81,7 +81,7 @@ class tela_filho : AppCompatActivity() {
         })
         val options = MqttConnectOptions()
         options.userName = "TrabalhoSD"
-        options.password = "maltar123".toCharArray()
+        options.password = "Maltar123".toCharArray()
         try {
             mqttClient.connect(options, null, object : IMqttActionListener {
                 override fun onSuccess(asyncActionToken: IMqttToken?) {
