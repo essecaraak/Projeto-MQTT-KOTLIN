@@ -68,7 +68,7 @@ class tela_pai : AppCompatActivity() {
                 recCount = recCount + 1
                 Log.d(TAG, "Received message ${recCount}: ${message.toString()} from topic: $topic")
                 if(topic=="filho1"){
-                    coordFilho.text="coordenadas do filho: ${message.toString()}"
+                    coordFilho.text="(${message.toString()})"
 
                 }
             }
@@ -167,7 +167,7 @@ class tela_pai : AppCompatActivity() {
                         Toast.makeText(this,"Localização nula",Toast.LENGTH_SHORT).show()
                     }else{
                         Log.d("Debug:" ,"Your Location:"+ location.longitude)
-                        coordPai.text = "Coordenadas atuais: ("+ location.longitude + "," + location.latitude + ")\n" + getCityName(location.latitude,location.longitude)
+                        coordPai.text = "("+ location.latitude + "," + location.longitude + ")\n" + getCityName(location.latitude,location.longitude)
                     }
                 }
             }else{

@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
         filho=findViewById(R.id.filho)
         pai=findViewById(R.id.pai)
         pai.setOnClickListener{
-            Toast.makeText(this,"foi",Toast.LENGTH_SHORT).show()
+
             try {
                 telaPai()
             }catch (e:Exception){
