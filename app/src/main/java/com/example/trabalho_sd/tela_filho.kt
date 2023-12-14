@@ -31,7 +31,7 @@ import java.util.Locale
 private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 private lateinit var lat: TextView
 private lateinit var long: TextView
-private lateinit var topico: EditText
+public lateinit var topico: EditText
 private lateinit var exibirTopico: TextView
 private lateinit var botaoConecta: Button
 private lateinit var botaoDesconecta: Button
@@ -55,13 +55,12 @@ class tela_filho : AppCompatActivity() {
             if(flagconect==1){
                 Toast.makeText(this,"Desconecte antes de conectar outro tópico",Toast.LENGTH_SHORT).show()
             }else if(topico.text.isEmpty()){
-                Toast.makeText(this,"insira um tópico antes",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this,"Insira um tópico antes",Toast.LENGTH_SHORT).show()
             }else{
-                connect(this)
-                Log.d("Debug:",checkPermission().toString())
-                Log.d("Debug:",isLocationEnabled().toString())
-                RequestPermission()
-                getLastLocation()
+                connect(applicationContext)
+
+
+
             }
         }
         botaoDesconecta.setOnClickListener{
@@ -91,6 +90,7 @@ class tela_filho : AppCompatActivity() {
 
             override fun connectionLost(cause: Throwable?) {
                 Log.d(TAG, "Connection lost ${cause.toString()}")
+
             }
 
             override fun deliveryComplete(token: IMqttDeliveryToken?) {
@@ -105,13 +105,12 @@ class tela_filho : AppCompatActivity() {
                 override fun onSuccess(asyncActionToken: IMqttToken?) {
                     Log.d(TAG, "Connection success")
                     flagconect=1
-                    subscribe("teste")
                     subscribe(""+topico.text)
                     exibirTopico.text="Tópico: "+ topico.text
                     topico.setText("")
-                    publish("teste", "conexãofoi")
                     Toast.makeText(context,"conexão feita com sucesso",Toast.LENGTH_SHORT).show()
-
+                    RequestPermission()
+                    getLastLocation()
 
                 }
 
@@ -245,7 +244,7 @@ class tela_filho : AppCompatActivity() {
                         Log.d("Debug:" ,"Your Location:"+ location.longitude)
                         lat.text = "Latitude: "+ location.latitude
                         long.text = "Longitude: "+ location.longitude
-                        publish("filho1",""+location.latitude+","+location.longitude)
+                        publish(""+topico.text,""+location.latitude+","+location.longitude)
                     }
                 }
             }else{
