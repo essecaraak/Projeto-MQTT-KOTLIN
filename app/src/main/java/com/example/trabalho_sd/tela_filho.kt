@@ -11,11 +11,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import info.mqtt.android.service.MqttAndroidClient
@@ -27,13 +27,15 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions
 import org.eclipse.paho.client.mqttv3.MqttException
 import org.eclipse.paho.client.mqttv3.MqttMessage
 import java.util.Locale
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 private lateinit var lat: TextView
 private lateinit var long: TextView
-private lateinit var cidade: TextView
-private lateinit var botao: Button
+private lateinit var topico: EditText
+private lateinit var exibirTopico: TextView
+private lateinit var botaoConecta: Button
+private lateinit var botaoDesconecta: Button
+private  var flagconect=0
 var PERMISSION_ID=1010
 private lateinit var mqttClient: MqttAndroidClient
 private  var TAG="mqtt"
@@ -45,18 +47,33 @@ class tela_filho : AppCompatActivity() {
         fusedLocationProviderClient= LocationServices.getFusedLocationProviderClient(this)
         lat = findViewById(R.id.altitude)
         long = findViewById(R.id.longitude)
-        cidade = findViewById(R.id.cidade)
-        botao = findViewById(R.id.botao)
-        botao.setOnClickListener{
-            connect(this)
+        topico = findViewById(R.id.textoTopico)
+        exibirTopico = findViewById(R.id.textoExibirTopico)
+        botaoConecta = findViewById(R.id.botaoConecta)
+        botaoDesconecta = findViewById(R.id.botaoDesconecta)
+        botaoConecta.setOnClickListener{
+            if(flagconect==1){
+                Toast.makeText(this,"Desconecte antes de conectar outro tópico",Toast.LENGTH_SHORT).show()
+            }else if(topico.text.isEmpty()){
+                Toast.makeText(this,"insira um tópico antes",Toast.LENGTH_SHORT).show()
+            }else{
+                connect(this)
+                Log.d("Debug:",checkPermission().toString())
+                Log.d("Debug:",isLocationEnabled().toString())
+                RequestPermission()
+                getLastLocation()
+            }
+        }
+        botaoDesconecta.setOnClickListener{
+            if(flagconect==1){
+                disconnect(this)
+            }else{
+                Toast.makeText(this,"nenhum tópico conectado",Toast.LENGTH_SHORT).show()
 
-            Log.d("Debug:",checkPermission().toString())
-            Log.d("Debug:",isLocationEnabled().toString())
-            RequestPermission()
-            getLastLocation()
-
+            }
 
         }
+
 
 
     }
@@ -87,14 +104,21 @@ class tela_filho : AppCompatActivity() {
             mqttClient.connect(options, null, object : IMqttActionListener {
                 override fun onSuccess(asyncActionToken: IMqttToken?) {
                     Log.d(TAG, "Connection success")
+                    flagconect=1
                     subscribe("teste")
-                    subscribe("filho1")
-                    publish("teste}", "conexãofoi")
+                    subscribe(""+topico.text)
+                    exibirTopico.text="Tópico: "+ topico.text
+                    topico.setText("")
+                    publish("teste", "conexãofoi")
+                    Toast.makeText(context,"conexão feita com sucesso",Toast.LENGTH_SHORT).show()
+
 
                 }
 
                 override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
                     Log.d(TAG, "Connection failure")
+                    Toast.makeText(context,"falha na conexão",Toast.LENGTH_SHORT).show()
+
                 }
             })
         } catch (e: MqttException) {
@@ -154,7 +178,7 @@ class tela_filho : AppCompatActivity() {
         }
     } */
 
-    fun publish(topic: String, msg: String, qos: Int = 1, retained: Boolean = false) {
+    fun publish(topic: String, msg: String, qos: Int = 2, retained: Boolean = false) {
         if (::mqttClient.isInitialized && mqttClient.isConnected) { // Verifica se mqttClient está inicializado e conectado
             try {
                 // Se estiver inicializado e conectado, então publica a mensagem
@@ -179,15 +203,24 @@ class tela_filho : AppCompatActivity() {
         }
     }
 
-    fun disconnect() {
+    fun disconnect(context: Context) {
         try {
             mqttClient.disconnect(null, object : IMqttActionListener {
                 override fun onSuccess(asyncActionToken: IMqttToken?) {
                     Log.d(TAG, "Disconnected")
+                    flagconect=0
+                    exibirTopico.text="Tópico: "
+                    lat.text="Latitude: "
+                    long.text="Longitude: "
+                    Toast.makeText(context,"Desconectado com sucessso",Toast.LENGTH_SHORT).show()
+
                 }
 
                 override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
                     Log.d(TAG, "Failed to disconnect")
+                    Toast.makeText(context,"Falha ao desconectar",Toast.LENGTH_SHORT).show()
+
+
                 }
             })
         } catch (e: MqttException) {
@@ -210,9 +243,8 @@ class tela_filho : AppCompatActivity() {
                         Toast.makeText(this,"Localização nula",Toast.LENGTH_SHORT).show()
                     }else{
                         Log.d("Debug:" ,"Your Location:"+ location.longitude)
-                        lat.text = "latitude: "+ location.latitude
-                        long.text = "longitude: "+ location.longitude
-                        cidade.text = "cidade: "+ getCityName(location.latitude,location.longitude)
+                        lat.text = "Latitude: "+ location.latitude
+                        long.text = "Longitude: "+ location.longitude
                         publish("filho1",""+location.latitude+","+location.longitude)
                     }
                 }
