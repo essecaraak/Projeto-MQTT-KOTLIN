@@ -178,7 +178,7 @@ class tela_pai : AppCompatActivity() {
         }
     }
 
-    private fun getCityName(lat: Double,long: Double):String{
+    /*private fun getCityName(lat: Double,long: Double):String{
         var cityName:String = ""
         var countryName = ""
         var geoCoder = Geocoder(this, Locale.getDefault())
@@ -191,6 +191,25 @@ class tela_pai : AppCompatActivity() {
             countryName = Adress.get(0).countryName
         }
         Log.d("Debug:","Your City: " + cityName + " ; your Country " + countryName)
+        return cityName
+    } */
+
+    private fun getCityName(lat: Double, long: Double): String {
+        var cityName: String = ""
+        var countryName = ""
+        var geoCoder = Geocoder(this, Locale.getDefault())
+        var Adress = geoCoder.getFromLocation(lat, long, 3)
+
+        if (Adress != null) {
+            if (Adress.isNotEmpty()) {
+                Adress?.get(0)?.let { address ->
+                    cityName = address.locality ?: ""
+                    countryName = address.countryName ?: ""
+                }
+            }
+        }
+
+        Log.d("Debug:", "Your City: $cityName; Your Country: $countryName")
         return cityName
     }
 
