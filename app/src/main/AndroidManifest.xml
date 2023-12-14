@@ -19,7 +19,29 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Trabalho_sd"
         tools:targetApi="31">
+
+        <!--
+             TODO: Before you run your application, you need a Google Maps API key.
+
+             To get one, follow the directions here:
+
+                https://developers.google.com/maps/documentation/android-sdk/get-api-key
+
+             Once you have your API key (it starts with "AIza"), define a new property in your
+             project's local.properties file (e.g. MAPS_API_KEY=Aiza...), and replace the
+             "YOUR_API_KEY" string in this file with "${MAPS_API_KEY}".
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyC7MXnPGM_t_CkMBTpldI5wf1_wBqJCvhc" />
+
+        <activity
+            android:name=".MapsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_maps" />
+
         <service android:name="org.eclipse.paho.android.service.MqttService" />
+
         <activity
             android:name=".tela_pai"
             android:exported="false" />
@@ -35,10 +57,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBAugcnxTvf0vOBIUxUpUUfP3ObAvmD_pI" />
     </application>
 
 </manifest>

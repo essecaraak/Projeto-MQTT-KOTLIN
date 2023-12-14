@@ -9,12 +9,19 @@ import android.widget.Toast
 class MainActivity : AppCompatActivity() {
     lateinit var filho: Button
     lateinit var pai: Button
+    lateinit var mapa: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         filho=findViewById(R.id.filho)
         pai=findViewById(R.id.pai)
+        mapa=findViewById(R.id.mapa)
+
+        mapa.setOnClickListener{
+            telaMapa()
+        }
+
         pai.setOnClickListener{
 
             try {
@@ -29,6 +36,8 @@ class MainActivity : AppCompatActivity() {
 
             telaFilho()
         }
+
+
     }
 
     private fun telaFilho(){
@@ -39,4 +48,11 @@ class MainActivity : AppCompatActivity() {
         val telaPai = Intent(this,tela_pai::class.java)
         startActivity(telaPai)
     }
+
+    private fun telaMapa(){
+        val telaMapa = Intent(this, MapsActivity::class.java)
+        startActivity(telaMapa)
+    }
+
+
 }

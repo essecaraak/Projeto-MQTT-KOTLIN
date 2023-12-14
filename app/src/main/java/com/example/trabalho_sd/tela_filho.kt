@@ -15,7 +15,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import info.mqtt.android.service.MqttAndroidClient
@@ -27,13 +26,15 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions
 import org.eclipse.paho.client.mqttv3.MqttException
 import org.eclipse.paho.client.mqttv3.MqttMessage
 import java.util.Locale
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 private lateinit var lat: TextView
 private lateinit var long: TextView
 private lateinit var cidade: TextView
 private lateinit var botao: Button
+lateinit var latmqtt: String
+lateinit var longmqtt: String
+
 var PERMISSION_ID=1010
 private lateinit var mqttClient: MqttAndroidClient
 private  var TAG="mqtt"
@@ -54,6 +55,8 @@ class tela_filho : AppCompatActivity() {
             Log.d("Debug:",isLocationEnabled().toString())
             RequestPermission()
             getLastLocation()
+            receiveMessages()
+
 
 
         }
@@ -89,7 +92,7 @@ class tela_filho : AppCompatActivity() {
                     Log.d(TAG, "Connection success")
                     subscribe("teste")
                     subscribe("filho1")
-                    publish("teste}", "conexãofoi")
+                    //publish("teste", "conexãofoi")
 
                 }
 
@@ -107,6 +110,8 @@ class tela_filho : AppCompatActivity() {
             mqttClient.subscribe(topic, qos, null, object : IMqttActionListener {
                 override fun onSuccess(asyncActionToken: IMqttToken?) {
                     Log.d(TAG, "Subscribed to $topic")
+
+
                 }
 
                 override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
@@ -117,6 +122,7 @@ class tela_filho : AppCompatActivity() {
             e.printStackTrace()
         }
     }
+
 
     fun unsubscribe(topic: String) {
         try {
@@ -132,6 +138,29 @@ class tela_filho : AppCompatActivity() {
         } catch (e: MqttException) {
             e.printStackTrace()
         }
+    }
+
+    fun receiveMessages() {
+        mqttClient.setCallback(object : MqttCallback {
+            override fun connectionLost(cause: Throwable) {
+                //connectionStatus = false
+                // Give your callback on failure here
+            }
+            override fun messageArrived(topic:String, message: MqttMessage) {
+                try {
+
+                    val data = String(message.payload, charset("UTF-8"))
+
+                    // data is the desired received message
+                    // Give your callback on message received here
+                } catch (e: Exception) {
+                    // Give your callback on error here
+                }
+            }
+            override fun deliveryComplete(token: IMqttDeliveryToken) {
+                // Acknowledgement on delivery complete
+            }
+        })
     }
 
     /*fun publish(topic: String, msg: String, qos: Int = 1, retained: Boolean = false) {
@@ -194,14 +223,14 @@ class tela_filho : AppCompatActivity() {
             e.printStackTrace()
         }
     }
-    private fun checkPermission():Boolean{
+    fun checkPermission():Boolean{
         return !(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this,
             Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED)
     }
     @SuppressLint("MissingPermission")
-    private fun getLastLocation(){
+    fun getLastLocation(){
         if(checkPermission()){
             if(isLocationEnabled()){
                 fusedLocationProviderClient.lastLocation.addOnCompleteListener {task->
@@ -212,8 +241,9 @@ class tela_filho : AppCompatActivity() {
                         Log.d("Debug:" ,"Your Location:"+ location.longitude)
                         lat.text = "latitude: "+ location.latitude
                         long.text = "longitude: "+ location.longitude
-                        cidade.text = "cidade: "+ getCityName(location.latitude,location.longitude)
-                        publish("filho1",""+location.latitude+","+location.longitude)
+                        //cidade.text = "cidade: "+ getCityName(location.latitude,location.longitude)
+                        publish("filho1",""+location.latitude)
+                        publish("filho1",""+location.longitude)
                     }
                 }
             }else{
@@ -260,14 +290,14 @@ class tela_filho : AppCompatActivity() {
     }
 
 
-    private fun RequestPermission(){
+    fun RequestPermission(){
         ActivityCompat.requestPermissions(
             this,
             arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION),
             PERMISSION_ID
         )
     }
-    private fun isLocationEnabled():Boolean{
+    fun isLocationEnabled():Boolean{
 
         var locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
@@ -286,4 +316,6 @@ class tela_filho : AppCompatActivity() {
             }
         }
     }
+
+
 }
