@@ -178,7 +178,7 @@ class tela_filho : AppCompatActivity() {
         }
     } */
 
-    fun publish(topic: String, msg: String, qos: Int = 1, retained: Boolean = false) {
+    fun publish(topic: String, msg: String, qos: Int = 2, retained: Boolean = false) {
         if (::mqttClient.isInitialized && mqttClient.isConnected) { // Verifica se mqttClient está inicializado e conectado
             try {
                 // Se estiver inicializado e conectado, então publica a mensagem
