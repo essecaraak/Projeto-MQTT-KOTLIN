@@ -91,6 +91,7 @@ class tela_filho : AppCompatActivity() {
 
 
     }
+    //pega as coisas do serviço e publica, não mexer
 @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
 fun onEvent(result:ResultData){
     lat.text = "Latitude: "+ result.lat
