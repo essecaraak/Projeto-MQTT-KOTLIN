@@ -6,10 +6,12 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:name=".LocationApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -20,6 +22,7 @@
         android:theme="@style/Theme.Trabalho_sd"
         tools:targetApi="31">
         <service android:name="org.eclipse.paho.android.service.MqttService" />
+        <service android:name=".LocationService" android:foregroundServiceType="location"/>
         <activity
             android:name=".tela_pai"
             android:exported="false" />

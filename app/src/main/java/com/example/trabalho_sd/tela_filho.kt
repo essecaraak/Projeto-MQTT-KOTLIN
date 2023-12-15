@@ -3,6 +3,7 @@ package com.example.trabalho_sd
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
@@ -58,8 +59,12 @@ class tela_filho : AppCompatActivity() {
                 Toast.makeText(this,"Insira um tópico antes",Toast.LENGTH_SHORT).show()
             }else{
                 connect(applicationContext)
+                RequestPermission()
+                Intent(applicationContext, LocationService::class.java).apply {
+                    action = LocationService.ACTION_START
+                    startService(this)
 
-
+                }
 
             }
         }
@@ -211,6 +216,10 @@ class tela_filho : AppCompatActivity() {
                     exibirTopico.text="Tópico: "
                     lat.text="Latitude: "
                     long.text="Longitude: "
+                    Intent(applicationContext, LocationService::class.java).apply {
+                        action = LocationService.ACTION_STOP
+                        startService(this)
+                    }
                     Toast.makeText(context,"Desconectado com sucessso",Toast.LENGTH_SHORT).show()
 
                 }
