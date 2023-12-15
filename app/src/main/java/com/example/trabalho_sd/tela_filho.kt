@@ -27,7 +27,11 @@ import org.eclipse.paho.client.mqttv3.MqttCallback
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions
 import org.eclipse.paho.client.mqttv3.MqttException
 import org.eclipse.paho.client.mqttv3.MqttMessage
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.util.Locale
+import kotlin.math.log
 
 private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 private lateinit var lat: TextView
@@ -40,6 +44,7 @@ private  var flagconect=0
 var PERMISSION_ID=1010
 private lateinit var mqttClient: MqttAndroidClient
 private  var TAG="mqtt"
+private  lateinit var valtopico: String
 
 class tela_filho : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,12 +59,12 @@ class tela_filho : AppCompatActivity() {
         botaoDesconecta = findViewById(R.id.botaoDesconecta)
         botaoConecta.setOnClickListener{
             if(flagconect==1){
-                Toast.makeText(this,"Desconecte antes de conectar outro tópico",Toast.LENGTH_SHORT).show()
+                Toast.makeText( this,"Desconecte antes de conectar outro tópico",Toast.LENGTH_SHORT).show()
             }else if(topico.text.isEmpty()){
                 Toast.makeText(this,"Insira um tópico antes",Toast.LENGTH_SHORT).show()
             }else{
-                connect(applicationContext)
-                RequestPermission()
+                connect(this)
+                EventBus.getDefault().register(this)
                 Intent(applicationContext, LocationService::class.java).apply {
                     action = LocationService.ACTION_START
                     startService(this)
@@ -71,6 +76,11 @@ class tela_filho : AppCompatActivity() {
         botaoDesconecta.setOnClickListener{
             if(flagconect==1){
                 disconnect(this)
+                EventBus.getDefault().unregister(this)
+                Intent(applicationContext, LocationService::class.java).apply {
+                    action = LocationService.ACTION_STOP
+                    startService(this)
+                }
             }else{
                 Toast.makeText(this,"nenhum tópico conectado",Toast.LENGTH_SHORT).show()
 
@@ -81,8 +91,13 @@ class tela_filho : AppCompatActivity() {
 
 
     }
-
-
+@Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+fun onEvent(result:ResultData){
+    lat.text = "Latitude: "+ result.lat
+    long.text = "Longitude: "+ result.long
+    Log.d(TAG,""+topico.text)
+    publish(valtopico,""+result.lat+","+result.long)
+}
     fun connect(context: Context) { //não mudie nada e funcinou kkkkk
         val serverURI = "ssl://e59f8ed61b8e47abb5e1752437996eda.s2.eu.hivemq.cloud:8883"
         var recCount = 0
@@ -112,10 +127,11 @@ class tela_filho : AppCompatActivity() {
                     flagconect=1
                     subscribe(""+topico.text)
                     exibirTopico.text="Tópico: "+ topico.text
+                    valtopico=""+topico.text
                     topico.setText("")
                     Toast.makeText(context,"conexão feita com sucesso",Toast.LENGTH_SHORT).show()
                     RequestPermission()
-                    getLastLocation()
+
 
                 }
 
@@ -216,10 +232,7 @@ class tela_filho : AppCompatActivity() {
                     exibirTopico.text="Tópico: "
                     lat.text="Latitude: "
                     long.text="Longitude: "
-                    Intent(applicationContext, LocationService::class.java).apply {
-                        action = LocationService.ACTION_STOP
-                        startService(this)
-                    }
+
                     Toast.makeText(context,"Desconectado com sucessso",Toast.LENGTH_SHORT).show()
 
                 }

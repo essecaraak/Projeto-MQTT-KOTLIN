@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.LocationServices
+
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -14,6 +15,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import org.greenrobot.eventbus.EventBus
 
 class LocationService: Service() {
 
@@ -55,6 +57,7 @@ class LocationService: Service() {
             .onEach { location ->
                 val lat = location.latitude.toString()
                 val long = location.longitude.toString()
+                EventBus.getDefault().post(ResultData(lat,long))
                 val updatedNotification = notification.setContentText(
                     "Location: ($lat, $long)"
                 )
@@ -66,6 +69,7 @@ class LocationService: Service() {
     }
 
     private fun stop() {
+
         stopForeground(true)
         stopSelf()
     }
