@@ -3,6 +3,7 @@ package com.example.trabalho_sd
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
@@ -31,9 +32,13 @@ private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 private lateinit var lat: TextView
 private lateinit var long: TextView
 private lateinit var cidade: TextView
+private lateinit var cidade2: TextView
 private lateinit var botao: Button
-lateinit var latmqtt: String
-lateinit var longmqtt: String
+private lateinit var mapafilho: Button
+public var latmqtt: Double = 10.0
+public var longmqtt: Double = 50.0
+public lateinit var resposta1:String
+public lateinit var resposta2:String
 
 var PERMISSION_ID=1010
 private lateinit var mqttClient: MqttAndroidClient
@@ -47,7 +52,18 @@ class tela_filho : AppCompatActivity() {
         lat = findViewById(R.id.altitude)
         long = findViewById(R.id.longitude)
         cidade = findViewById(R.id.cidade)
+        cidade2 = findViewById(R.id.cidade2)
         botao = findViewById(R.id.botao)
+        mapafilho = findViewById(R.id.mapafilho)
+
+
+        mapafilho.setOnClickListener{
+
+            receiveMessages()
+            telaMapa()
+
+        }
+
         botao.setOnClickListener{
             connect(this)
 
@@ -56,14 +72,26 @@ class tela_filho : AppCompatActivity() {
             RequestPermission()
             getLastLocation()
             receiveMessages()
+            receiveMessages()
+
 
 
 
         }
 
-
     }
 
+    private fun telaMapa(){
+        val telaMapa = Intent(this, MapsActivity::class.java)
+        startActivity(telaMapa)
+    }
+
+    private fun getlat(): Double{
+
+        return 12.0
+
+
+    }
 
     fun connect(context: Context) { //não mudie nada e funcinou kkkkk
         val serverURI = "ssl://e59f8ed61b8e47abb5e1752437996eda.s2.eu.hivemq.cloud:8883"
@@ -141,6 +169,7 @@ class tela_filho : AppCompatActivity() {
     }
 
     fun receiveMessages() {
+
         mqttClient.setCallback(object : MqttCallback {
             override fun connectionLost(cause: Throwable) {
                 //connectionStatus = false
@@ -150,6 +179,14 @@ class tela_filho : AppCompatActivity() {
                 try {
 
                     val data = String(message.payload, charset("UTF-8"))
+                    var lista : List <String> = data.split(",")
+                    //resposta1 = lista[0]
+                    //resposta2 = lista[1]
+                    cidade.text = lista[0]
+                    cidade2.text = lista[1]
+
+                    latmqtt = lista[0].toDouble()
+                    longmqtt=lista[1].toDouble()
 
                     // data is the desired received message
                     // Give your callback on message received here
@@ -161,6 +198,8 @@ class tela_filho : AppCompatActivity() {
                 // Acknowledgement on delivery complete
             }
         })
+
+
     }
 
     /*fun publish(topic: String, msg: String, qos: Int = 1, retained: Boolean = false) {
@@ -242,8 +281,14 @@ class tela_filho : AppCompatActivity() {
                         lat.text = "latitude: "+ location.latitude
                         long.text = "longitude: "+ location.longitude
                         //cidade.text = "cidade: "+ getCityName(location.latitude,location.longitude)
-                        publish("filho1",""+location.latitude)
-                        publish("filho1",""+location.longitude)
+                        publish("filho1",""+location.latitude+","+location.longitude)
+
+                        //cidade.text = resposta1
+                       // cidade2.text = resposta2
+                        //latmqtt = resposta1.toDouble()
+                        //longmqtt= resposta2.toDouble()
+                       //cidade2.text = latmqtt
+
                     }
                 }
             }else{
