@@ -40,6 +40,7 @@ public lateinit var topico: EditText
 private lateinit var exibirTopico: TextView
 private lateinit var botaoConecta: Button
 private lateinit var botaoDesconecta: Button
+private lateinit var botaoMapaFilho: Button
 private  var flagconect=0
 var PERMISSION_ID=1010
 private lateinit var mqttClient: MqttAndroidClient
@@ -57,6 +58,7 @@ class tela_filho : AppCompatActivity() {
         exibirTopico = findViewById(R.id.textoExibirTopico)
         botaoConecta = findViewById(R.id.botaoConecta)
         botaoDesconecta = findViewById(R.id.botaoDesconecta)
+        botaoMapaFilho = findViewById(R.id.botaoMapaFilho)
         botaoConecta.setOnClickListener{
             if(flagconect==1){
                 Toast.makeText( this,"Desconecte antes de conectar outro tópico",Toast.LENGTH_SHORT).show()
@@ -86,6 +88,24 @@ class tela_filho : AppCompatActivity() {
 
             }
 
+        }
+
+        botaoMapaFilho.setOnClickListener{
+            if(flagconect==1){
+                Toast.makeText( this,"Desconecte antes de conectar outro tópico",Toast.LENGTH_SHORT).show()
+            }else if(topico.text.isEmpty()){
+                Toast.makeText(this,"Insira um tópico antes",Toast.LENGTH_SHORT).show()
+            }else{
+                connect(this)
+                EventBus.getDefault().register(this)
+                Intent(applicationContext, LocationService::class.java).apply {
+                    action = LocationService.ACTION_START
+                    startService(this)
+
+
+                }
+
+            }
         }
 
 
