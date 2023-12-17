@@ -121,7 +121,7 @@ fun onEvent(result:ResultData){
     lat.text = "Latitude: "+ result.lat
     long.text = "Longitude: "+ result.long
         loc1 = result.lat.toDouble()
-        loc2 = result.lat.toDouble()
+        loc2 = result.long.toDouble()
     Log.d(TAG,""+topico.text)
     publish(valtopico,""+result.lat+","+result.long)
 }
