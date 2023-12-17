@@ -58,6 +58,8 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation ("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5")
     implementation ("org.eclipse.paho:org.eclipse.paho.android.service:1.1.1")
+    implementation ("androidx.legacy:legacy-support-v4:1.0.0")
+    implementation ("com.github.hannesa2:paho.mqtt.android:4.2")
     implementation ("androidx.localbroadcastmanager:localbroadcastmanager:1.0.0")
     implementation ("org.greenrobot:eventbus:3.2.0")
     implementation("com.google.android.gms:play-services-maps:18.2.0")

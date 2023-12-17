@@ -19,7 +19,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import org.eclipse.paho.android.service.MqttAndroidClient
+import info.mqtt.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.IMqttActionListener
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import org.eclipse.paho.client.mqttv3.IMqttToken
@@ -117,14 +117,17 @@ class tela_filho : AppCompatActivity() {
     //pega as coisas do serviço e publica, não mexer
 @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
 
-fun onEvent(result:ResultData){
-    lat.text = "Latitude: "+ result.lat
-    long.text = "Longitude: "+ result.long
-        loc1 = result.lat.toDouble()
-        loc2 = result.long.toDouble()
-    Log.d(TAG,""+topico.text)
-    publish(valtopico,""+result.lat+","+result.long)
-}
+    fun onEvent(result: ResultData) {
+        runOnUiThread {
+            lat.text = "Latitude: " + result.lat
+            long.text = "Longitude: " + result.long
+            loc1 = result.lat.toDouble()
+            loc2 = result.long.toDouble()
+            Log.d(TAG, "" + topico.text)
+            publish(valtopico, "" + result.lat + "," + result.long)
+        }
+    }
+
     fun connect(context: Context) { //não mudie nada e funcinou kkkkk
         val serverURI = "ssl://e59f8ed61b8e47abb5e1752437996eda.s2.eu.hivemq.cloud:8883"
         var recCount = 0
@@ -150,15 +153,17 @@ fun onEvent(result:ResultData){
         try {
             mqttClient.connect(options, null, object : IMqttActionListener {
                 override fun onSuccess(asyncActionToken: IMqttToken?) {
-                    Log.d(TAG, "Connection success")
-                    flagconect=1
-                    subscribe(""+topico.text)
-                    exibirTopico.text="Tópico: "+ topico.text
-                    valtopico=""+topico.text
-                    topico.setText("")
-                    Toast.makeText(context,"conexão feita com sucesso",Toast.LENGTH_SHORT).show()
-                    RequestPermission()
-
+                    runOnUiThread {
+                        Log.d(TAG, "Connection success")
+                        flagconect = 1
+                        subscribe("" + topico.text)
+                        exibirTopico.text = "Tópico: " + topico.text
+                        valtopico = "" + topico.text
+                        topico.setText("")
+                        Toast.makeText(context, "conexão feita com sucesso", Toast.LENGTH_SHORT)
+                            .show()
+                        RequestPermission()
+                    }
 
                 }
 
