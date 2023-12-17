@@ -41,6 +41,8 @@ private lateinit var exibirTopico: TextView
 private lateinit var botaoConecta: Button
 private lateinit var botaoDesconecta: Button
 private lateinit var botaoMapaFilho: Button
+var loc1: Double = 10.0
+var loc2: Double = 20.0
 private  var flagconect=0
 var PERMISSION_ID=1010
 private lateinit var mqttClient: MqttAndroidClient
@@ -51,7 +53,7 @@ class tela_filho : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tela_filho)
-        fusedLocationProviderClient= LocationServices.getFusedLocationProviderClient(this)
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         lat = findViewById(R.id.altitude)
         long = findViewById(R.id.longitude)
         topico = findViewById(R.id.textoTopico)
@@ -59,12 +61,16 @@ class tela_filho : AppCompatActivity() {
         botaoConecta = findViewById(R.id.botaoConecta)
         botaoDesconecta = findViewById(R.id.botaoDesconecta)
         botaoMapaFilho = findViewById(R.id.botaoMapaFilho)
-        botaoConecta.setOnClickListener{
-            if(flagconect==1){
-                Toast.makeText( this,"Desconecte antes de conectar outro tópico",Toast.LENGTH_SHORT).show()
-            }else if(topico.text.isEmpty()){
-                Toast.makeText(this,"Insira um tópico antes",Toast.LENGTH_SHORT).show()
-            }else{
+        botaoConecta.setOnClickListener {
+            if (flagconect == 1) {
+                Toast.makeText(
+                    this,
+                    "Desconecte antes de conectar outro tópico",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else if (topico.text.isEmpty()) {
+                Toast.makeText(this, "Insira um tópico antes", Toast.LENGTH_SHORT).show()
+            } else {
                 connect(this)
                 EventBus.getDefault().register(this)
                 Intent(applicationContext, LocationService::class.java).apply {
@@ -75,47 +81,47 @@ class tela_filho : AppCompatActivity() {
 
             }
         }
-        botaoDesconecta.setOnClickListener{
-            if(flagconect==1){
+        botaoDesconecta.setOnClickListener {
+            if (flagconect == 1) {
                 disconnect(this)
                 EventBus.getDefault().unregister(this)
                 Intent(applicationContext, LocationService::class.java).apply {
                     action = LocationService.ACTION_STOP
                     startService(this)
                 }
-            }else{
-                Toast.makeText(this,"nenhum tópico conectado",Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "nenhum tópico conectado", Toast.LENGTH_SHORT).show()
 
             }
 
         }
 
-        botaoMapaFilho.setOnClickListener{
-            if(flagconect==1){
-                Toast.makeText( this,"Desconecte antes de conectar outro tópico",Toast.LENGTH_SHORT).show()
-            }else if(topico.text.isEmpty()){
-                Toast.makeText(this,"Insira um tópico antes",Toast.LENGTH_SHORT).show()
-            }else{
-                connect(this)
-                EventBus.getDefault().register(this)
-                Intent(applicationContext, LocationService::class.java).apply {
-                    action = LocationService.ACTION_START
-                    startService(this)
+        botaoMapaFilho.setOnClickListener {
+            if (flagconect == 1) {
+
+                    telaMapa()
 
 
-                }
-
+            } else {
+                Toast.makeText(this, "nenhum tópico conectado", Toast.LENGTH_SHORT).show()
             }
+
         }
-
-
-
     }
+
+    private fun telaMapa(){
+        val telaMapa = Intent(this,MapsActivity::class.java)
+        startActivity(telaMapa)
+    }
+
     //pega as coisas do serviço e publica, não mexer
 @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+
 fun onEvent(result:ResultData){
     lat.text = "Latitude: "+ result.lat
     long.text = "Longitude: "+ result.long
+        loc1 = result.lat.toDouble()
+        loc2 = result.lat.toDouble()
     Log.d(TAG,""+topico.text)
     publish(valtopico,""+result.lat+","+result.long)
 }

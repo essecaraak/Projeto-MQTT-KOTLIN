@@ -88,9 +88,9 @@ class tela_pai : AppCompatActivity() {
             mqttClient.connect(options, null, object : IMqttActionListener {
                 override fun onSuccess(asyncActionToken: IMqttToken?) {
                     Log.d(TAG, "Connection success")
-                    subscribe("teste")
-                    subscribe("filho1")
-                    publish("teste", "conexãofoi")
+                    //subscribe("teste")
+                    //subscribe("filho1")
+                    //publish("teste", "conexãofoi")
 
                 }
 

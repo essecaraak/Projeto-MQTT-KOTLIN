@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+
 }
 
 android {
@@ -59,4 +60,6 @@ dependencies {
     implementation ("org.eclipse.paho:org.eclipse.paho.android.service:1.1.1")
     implementation ("androidx.localbroadcastmanager:localbroadcastmanager:1.0.0")
     implementation ("org.greenrobot:eventbus:3.2.0")
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+
 }
