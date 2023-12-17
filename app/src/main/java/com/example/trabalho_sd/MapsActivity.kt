@@ -44,7 +44,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         // Add a marker in Sydney and move the camera
         val minhaloc = LatLng(loc1, loc2)
-        val locdesejada = LatLng(-122, 37.0)
+        val locdesejada = LatLng(-122.0, 37.0)
         mMap.addMarker(MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).position(minhaloc).title("Minha localização"))
         mMap.moveCamera(CameraUpdateFactory.newLatLng(minhaloc))
         mMap.addMarker(MarkerOptions().position(locdesejada).title("Localização da pessoa"))
