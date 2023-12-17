@@ -38,6 +38,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         var filho = tela_filho()
         minhalat = filho.getlat()
         minhalong = filho.getlong()
+
+        latpessoa = filho.getlatoutro()
+        longpessoa = filho.getlongoutro()
     }
 
     /**
@@ -54,7 +57,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         // Add a marker in Sydney and move the camera
         val minhaloc = LatLng(minhalat, minhalong)
-        val locdesejada = LatLng(70.0, 100.0)
+        val locdesejada = LatLng(latpessoa, longpessoa)
         mMap.addMarker(MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).position(minhaloc).title("Minha localização"))
         mMap.moveCamera(CameraUpdateFactory.newLatLng(minhaloc))
         mMap.addMarker(MarkerOptions().position(locdesejada).title("Localização da pessoa"))

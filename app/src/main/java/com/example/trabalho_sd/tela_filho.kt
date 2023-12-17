@@ -48,6 +48,8 @@ var PERMISSION_ID=1010
 private lateinit var mqttClient: MqttAndroidClient
 private  var TAG="mqtt"
 private  lateinit var valtopico: String
+private  var latoutro: Double = 0.0
+private  var longoutro: Double = 0.0
 
 class tela_filho : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -98,10 +100,8 @@ class tela_filho : AppCompatActivity() {
 
         botaoMapaFilho.setOnClickListener {
             if (flagconect == 1) {
-
+                    receiveMessages()
                     telaMapa()
-
-
             } else {
                 Toast.makeText(this, "nenhum tópico conectado", Toast.LENGTH_SHORT).show()
             }
@@ -128,6 +128,8 @@ fun onEvent(result:ResultData){
     fun connect(context: Context) { //não mudie nada e funcinou kkkkk
         val serverURI = "ssl://e59f8ed61b8e47abb5e1752437996eda.s2.eu.hivemq.cloud:8883"
         var recCount = 0
+
+
         mqttClient = MqttAndroidClient(context, serverURI, "kotlin_client")
         mqttClient.setCallback(object : MqttCallback {
             override fun messageArrived(topic: String?, message: MqttMessage?) {
@@ -145,8 +147,8 @@ fun onEvent(result:ResultData){
             }
         })
         val options = MqttConnectOptions()
-        options.userName = "TrabalhoSD"
-        options.password = "Maltar123".toCharArray()
+        options.userName = "TrabalhoSD2"
+        options.password = "Maltar234".toCharArray()
         try {
             mqttClient.connect(options, null, object : IMqttActionListener {
                 override fun onSuccess(asyncActionToken: IMqttToken?) {
@@ -275,7 +277,41 @@ fun onEvent(result:ResultData){
             e.printStackTrace()
         }
     }
-    private fun checkPermission():Boolean{
+
+    fun receiveMessages() {
+
+        var topico = "pai"
+        subscribe(topico)
+
+        mqttClient.setCallback(object : MqttCallback {
+            override fun connectionLost(cause: Throwable) {
+                //connectionStatus = false
+                // Give your callback on failure here
+            }
+
+            override fun messageArrived(topico: String, message: MqttMessage) {
+                try {
+
+                    val data = String(message.payload, charset("UTF-8"))
+                    var lista: List<String> = data.split(",")
+                    latoutro = lista[0].toDouble()
+                    latoutro = lista[1].toDouble()
+
+
+                    // data is the desired received message
+                    // Give your callback on message received here
+                } catch (e: Exception) {
+                    // Give your callback on error here
+                }
+            }
+
+            override fun deliveryComplete(token: IMqttDeliveryToken) {
+                // Acknowledgement on delivery complete
+            }
+        })
+    }
+
+        private fun checkPermission():Boolean{
         return !(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this,
             Manifest.permission.ACCESS_FINE_LOCATION)
@@ -376,4 +412,15 @@ fun onEvent(result:ResultData){
         return loc2
 
     }
+
+
+    fun getlatoutro(): Double {
+        return latoutro
+    }
+    fun getlongoutro(): Double {
+        return longoutro
+    }
+
+
 }
+

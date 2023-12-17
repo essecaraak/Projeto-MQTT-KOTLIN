@@ -35,6 +35,11 @@ class tela_pai : AppCompatActivity() {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var coordPai: TextView
     private lateinit var coordFilho: TextView
+    private var latPai: Double = 0.0
+    private var longPai: Double = 0.0
+    private var latFilho: Double = 0.0
+    private var longFilho: Double = 0.0
+    private var topicopai: String = "filho"
     private lateinit var botao: Button
     private lateinit var mqttClient: MqttAndroidClient
     private  var TAG="mqtt"
@@ -49,12 +54,15 @@ class tela_pai : AppCompatActivity() {
         coordFilho = findViewById(R.id.coordFilho)
         botao = findViewById(R.id.pingFilho)
         botao.setOnClickListener{
+
             connect(this)
+
 
             Log.d("Debug:",checkPermission().toString())
             Log.d("Debug:",isLocationEnabled().toString())
             RequestPermission()
             getLastLocation()
+
 
         }
     }
@@ -63,12 +71,44 @@ class tela_pai : AppCompatActivity() {
         val serverURI = "ssl://e59f8ed61b8e47abb5e1752437996eda.s2.eu.hivemq.cloud:8883"
         var recCount = 0
         mqttClient = MqttAndroidClient(context, serverURI, "kotlin_client")
+
+        val options = MqttConnectOptions()
+        options.userName = "TrabalhoSD2"
+        options.password = "Maltar234".toCharArray()
+        try {
+            mqttClient.connect(options, null, object : IMqttActionListener {
+                override fun onSuccess(asyncActionToken: IMqttToken?) {
+                    Log.d(TAG, "Connection success")
+                    subscribe(topicopai)
+                    //subscribe("filho1")
+                    //publish("teste", "conexãofoi")
+                    //receiveMessages()
+
+
+                }
+
+                override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
+                    Log.d(TAG, "Connection failure")
+                }
+            })
+        } catch (e: MqttException) {
+            e.printStackTrace()
+        }
+
         mqttClient.setCallback(object : MqttCallback {
-            override fun messageArrived(topic: String?, message: MqttMessage?) {
+            override fun messageArrived(topicopai: String?, message: MqttMessage?) {
                 recCount = recCount + 1
-                Log.d(TAG, "Received message ${recCount}: ${message.toString()} from topic: $topic")
-                if(topic=="filho1"){
-                    coordFilho.text="(${message.toString()})"
+                Log.d(TAG, "Received message ${recCount}: ${message.toString()} from topic: $topicopai")
+                if(topicopai=="filho"){
+                    var msg="(${message.toString()})"
+                    coordFilho.text=msg
+                    var lista: List<String> = msg.split(",")
+                    latFilho = lista[0].toDouble()
+                    longFilho = lista[1].toDouble()
+
+
+
+
 
                 }
             }
@@ -81,26 +121,6 @@ class tela_pai : AppCompatActivity() {
 
             }
         })
-        val options = MqttConnectOptions()
-        options.userName = "TrabalhoSD2"
-        options.password = "Maltar234".toCharArray()
-        try {
-            mqttClient.connect(options, null, object : IMqttActionListener {
-                override fun onSuccess(asyncActionToken: IMqttToken?) {
-                    Log.d(TAG, "Connection success")
-                    //subscribe("teste")
-                    //subscribe("filho1")
-                    //publish("teste", "conexãofoi")
-
-                }
-
-                override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
-                    Log.d(TAG, "Connection failure")
-                }
-            })
-        } catch (e: MqttException) {
-            e.printStackTrace()
-        }
 
     }
     fun subscribe(topic: String, qos: Int = 1) {
@@ -152,6 +172,38 @@ class tela_pai : AppCompatActivity() {
             e.printStackTrace()
         }
     }
+
+    fun receiveMessages() {
+
+        mqttClient.setCallback(object : MqttCallback {
+            override fun connectionLost(cause: Throwable) {
+                //connectionStatus = false
+                // Give your callback on failure here
+            }
+
+            override fun messageArrived(topicopai: String, message: MqttMessage) {
+                try {
+
+                    val data = String(message.payload, charset("UTF-8"))
+                    //coordFilho.text = data
+                   // var lista: List<String> = data.split(",")
+                   // latFilho = lista[0].toDouble()
+                   // longFilho = lista[1].toDouble()
+
+
+                    // data is the desired received message
+                    // Give your callback on message received here
+                } catch (e: Exception) {
+                    // Give your callback on error here
+                }
+            }
+
+            override fun deliveryComplete(token: IMqttDeliveryToken) {
+                // Acknowledgement on delivery complete
+            }
+        })
+    }
+
     private fun checkPermission():Boolean{
         return !(ContextCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -167,7 +219,9 @@ class tela_pai : AppCompatActivity() {
                         Toast.makeText(this,"Localização nula",Toast.LENGTH_SHORT).show()
                     }else{
                         Log.d("Debug:" ,"Your Location:"+ location.longitude)
-                        coordPai.text = "("+ location.latitude + "," + location.longitude + ")\n" + getCityName(location.latitude,location.longitude)
+                        latPai = location.latitude
+                        longPai = location.longitude
+                        coordPai.text = "("+ location.latitude + "," + location.longitude + ")\n" + "Cidade: " + getCityName(location.latitude,location.longitude)
                     }
                 }
             }else{
