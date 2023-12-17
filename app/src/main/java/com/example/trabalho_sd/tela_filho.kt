@@ -41,8 +41,8 @@ private lateinit var exibirTopico: TextView
 private lateinit var botaoConecta: Button
 private lateinit var botaoDesconecta: Button
 private lateinit var botaoMapaFilho: Button
-var loc1: Double = 10.0
-var loc2: Double = 20.0
+private var loc1: Double = 10.0
+private var loc2: Double = 20.0
 private  var flagconect=0
 var PERMISSION_ID=1010
 private lateinit var mqttClient: MqttAndroidClient
@@ -365,5 +365,15 @@ fun onEvent(result:ResultData){
                 Log.d("Debug:","deu certo")
             }
         }
+    }
+
+    fun getlat(): Double {
+        return loc1
+
+    }
+
+    fun getlong(): Double {
+        return loc2
+
     }
 }

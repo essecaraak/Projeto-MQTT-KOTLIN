@@ -13,6 +13,12 @@ import com.example.trabalho_sd.databinding.ActivityMapsBinding
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 
+private var minhalat: Double = 0.0
+private var minhalong: Double = 0.0
+
+private var latpessoa: Double = 0.0
+private var longpessoa: Double = 0.0
+
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
@@ -28,6 +34,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        var filho = tela_filho()
+        minhalat = filho.getlat()
+        minhalong = filho.getlong()
     }
 
     /**
@@ -43,7 +53,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap = googleMap
 
         // Add a marker in Sydney and move the camera
-        val minhaloc = LatLng(loc1, loc2)
+        val minhaloc = LatLng(minhalat, minhalong)
         val locdesejada = LatLng(70.0, 100.0)
         mMap.addMarker(MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).position(minhaloc).title("Minha localização"))
         mMap.moveCamera(CameraUpdateFactory.newLatLng(minhaloc))
