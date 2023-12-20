@@ -58,8 +58,9 @@ private lateinit var mqttClient: MqttAndroidClient
 private  var TAG="mqtt"
 private  lateinit var valtopico_self: String
 private  lateinit var valtopico_amigo: String
-private   var username: String="TrabalhoSD"
-private   var password: String="Maltar123"
+private   var username1: String="TrabalhoSD"
+private   var password1: String="Maltar123"
+private   var clientid: String="id1"
 
 class tela_filho : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
@@ -132,18 +133,21 @@ class tela_filho : AppCompatActivity() {
 
         }
         botaoUser.setOnClickListener(){
-            if(username=="TrabalhoSD"){
-                username="TrabalhoSD2"
-                password="Maltar234"
-                textUser.text= username
-            }else if(username=="TrabalhoSD2"){
-                username="VanessaTeste"
-                password="Vanessa2023"
-                textUser.text= username
-            }else if(username=="VanessaTeste"){
-                username="TrabalhoSD"
-                password="Maltar123"
-                textUser.text= username
+            if(username1=="TrabalhoSD"){
+                username1="TrabalhoSD2"
+                password1="Maltar234"
+                clientid="id2"
+                textUser.text= username1
+            }else if(username1=="TrabalhoSD2"){
+                username1="VanessaTeste"
+                password1="Vanessa2023"
+                clientid="id3"
+                textUser.text= username1
+            }else if(username1=="VanessaTeste"){
+                username1="TrabalhoSD"
+                password1="Maltar123"
+                clientid="id1"
+                textUser.text= username1
             }
         }
 
@@ -182,7 +186,7 @@ class tela_filho : AppCompatActivity() {
     fun connect(context: Context) { //não mudie nada e funcinou kkkkk
         val serverURI = "ssl://e59f8ed61b8e47abb5e1752437996eda.s2.eu.hivemq.cloud:8883"
         var recCount = 0
-        mqttClient = MqttAndroidClient(context, serverURI, "kotlin_client")
+        mqttClient = MqttAndroidClient(context, serverURI, clientid)
         mqttClient.setCallback(object : MqttCallback {
             override fun messageArrived(topic: String?, message: MqttMessage?) {
                 recCount = recCount + 1
@@ -214,6 +218,7 @@ class tela_filho : AppCompatActivity() {
                 self_coords.text = "Suas coordenadas:"
                 exibirTopicoAmigo.text="CPF do seu amigo:"
                 friend_coords.text = "Coordenadas do seu amigo:"
+                EventBus.getDefault().unregister(this)
                 Intent(applicationContext, LocationService::class.java).apply {
                     action = LocationService.ACTION_STOP
                     startService(this)
@@ -231,8 +236,8 @@ class tela_filho : AppCompatActivity() {
             }
         })
         val options = MqttConnectOptions()
-        options.userName = username
-        options.password = password.toCharArray()
+        options.userName = username1
+        options.password = password1.toCharArray()
         try {
             mqttClient.connect(options, null, object : IMqttActionListener {
                 override fun onSuccess(asyncActionToken: IMqttToken?) {
