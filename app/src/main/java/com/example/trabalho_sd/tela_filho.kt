@@ -164,7 +164,7 @@ class tela_filho : AppCompatActivity() {
             override fun messageArrived(topic: String?, message: MqttMessage?) {
                 recCount = recCount + 1
                 val txt=""+message
-                if(topic == ""+valtopico_amigo){
+                if(topic == valtopico_amigo){
                     friend_coords.text = "Coordenadas do seu amigo:\n("+message+")"
                     exibirTopicoAmigo.text = "CPF do seu amigo: " + valtopico_amigo
                     exibirTopico.text = "Seu CPF: " + valtopico_self
@@ -199,7 +199,6 @@ class tela_filho : AppCompatActivity() {
                     runOnUiThread {
                         Log.d(TAG, "Connection success")
                         flagconect = 1
-                        subscribe("" + topico.text,2)
                         exibirTopico.text = "Seu CPF: " + topico.text
                         valtopico_self = "" + topico.text
                         topico.setText("")
