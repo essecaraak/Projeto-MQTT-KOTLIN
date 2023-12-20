@@ -10,6 +10,7 @@ import android.location.Geocoder
 import java.text.DecimalFormat
 import android.location.Location
 import android.location.LocationManager
+import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
@@ -54,6 +55,8 @@ var loc2: Double = -1.0
 var loc1Amigo: Double = -1.0
 var loc2Amigo: Double = -1.0
 private  var flagconect=0
+private  var flaginternet=1
+private  var flagps=0
 var PERMISSION_ID=1010
 private lateinit var mqttClient: MqttAndroidClient
 private  var TAG="mqtt"
@@ -93,13 +96,23 @@ class tela_filho : AppCompatActivity() {
                 Toast.makeText(this, "Insira os dois CPFs ", Toast.LENGTH_SHORT).show()
             } else {
                 checkPermission()
-                connect(this)
-                EventBus.getDefault().register(this)
-                Intent(applicationContext, LocationService::class.java).apply {
-                    action = LocationService.ACTION_START
-                    startService(this)
+                    if(flaginternet==1){
+                        if (flagps==1){
+                            connect(this)
+                            EventBus.getDefault().register(this)
+                            Intent(applicationContext, LocationService::class.java).apply {
+                                action = LocationService.ACTION_START
+                                startService(this)
+                        }
+                    }else{
+                            Toast.makeText(this, "ligue seu gps para continuar", Toast.LENGTH_SHORT).show()
+                            val settingsIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                            startActivity(settingsIntent)
 
-                }
+                        }
+                }else{
+                        Toast.makeText(this, "Sem conexão a internet", Toast.LENGTH_SHORT).show()
+                    }
 
             }
         }
@@ -411,10 +424,23 @@ class tela_filho : AppCompatActivity() {
         if (!isGpsEnabled) {
             // GPS está desativado, você pode exibir um diálogo ou uma mensagem para incentivar o usuário a ativá-lo
             // Por exemplo, você pode abrir as configurações de localização usando Intent
-            val settingsIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-            startActivity(settingsIntent)
+            flagps=0
+        }else{
+            flagps=1
+        }
+
+        // Verifica a conexão com a Internet
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+
+        if (networkInfo == null || !networkInfo.isConnected) {
+            // Não há conexão com a Internet, você pode exibir uma mensagem para o usuário
+            flaginternet=0
+        }else{
+            flaginternet=1
         }
     }
+
 
     @SuppressLint("MissingPermission")
     /*private fun getLastLocation(){
