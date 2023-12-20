@@ -381,11 +381,42 @@ class tela_filho : AppCompatActivity() {
             e.printStackTrace()
         }
     }
-    private fun checkPermission():Boolean{
-        return !(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this,
-            Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED)
+    private fun checkPermission(){
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+                PERMISSION_ID)
+        }
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                PERMISSION_ID)
+        }
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
+            != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.INTERNET),
+                PERMISSION_ID)
+        }
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE)
+            != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.FOREGROUND_SERVICE),
+                PERMISSION_ID)
+        }
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                PERMISSION_ID)
+        }
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.WAKE_LOCK)
+            != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WAKE_LOCK),
+                PERMISSION_ID)
+        }
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE)
+            != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_NETWORK_STATE),
+                PERMISSION_ID)
+        }
     }
     @SuppressLint("MissingPermission")
     /*private fun getLastLocation(){
