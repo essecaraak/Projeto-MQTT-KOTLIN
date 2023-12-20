@@ -46,6 +46,8 @@ private lateinit var exibirDistancia: TextView
 private lateinit var botaoConecta: Button
 private lateinit var botaoDesconecta: Button
 private lateinit var botaoMapaFilho: Button
+private lateinit var textUser: TextView
+private lateinit var botaoUser: Button
 var loc1: Double = -1.0
 var loc2: Double = -1.0
 var loc1Amigo: Double = -1.0
@@ -56,8 +58,11 @@ private lateinit var mqttClient: MqttAndroidClient
 private  var TAG="mqtt"
 private  lateinit var valtopico_self: String
 private  lateinit var valtopico_amigo: String
+private   var username: String="TrabalhoSD"
+private   var password: String="Maltar123"
 
 class tela_filho : AppCompatActivity() {
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tela_filho)
@@ -72,6 +77,8 @@ class tela_filho : AppCompatActivity() {
         botaoConecta = findViewById(R.id.botaoConecta)
         botaoDesconecta = findViewById(R.id.botaoDesconecta)
         botaoMapaFilho = findViewById(R.id.botaoMapaFilho)
+        textUser = findViewById(R.id.textoUser)
+        botaoUser = findViewById(R.id.botaoUser)
 
         checkPermission()
         botaoConecta.setOnClickListener {
@@ -124,6 +131,22 @@ class tela_filho : AppCompatActivity() {
             }
 
         }
+        botaoUser.setOnClickListener(){
+            if(username=="TrabalhoSD"){
+                username="TrabalhoSD2"
+                password="Maltar234"
+                textUser.text= username
+            }else if(username=="TrabalhoSD2"){
+                username="VanessaTeste"
+                password="Vanessa2023"
+                textUser.text= username
+            }else if(username=="VanessaTeste"){
+                username="TrabalhoSD"
+                password="Maltar123"
+                textUser.text= username
+            }
+        }
+
     }
 
     private fun telaMapa(){
@@ -182,6 +205,23 @@ class tela_filho : AppCompatActivity() {
             }
 
             override fun connectionLost(cause: Throwable?) {
+                flagconect=0
+                loc1=-1.0
+                loc2=-1.0
+                loc2Amigo=-1.0
+                loc1Amigo=-1.0
+                exibirTopico.text="Seu CPF:"
+                self_coords.text = "Suas coordenadas:"
+                exibirTopicoAmigo.text="CPF do seu amigo:"
+                friend_coords.text = "Coordenadas do seu amigo:"
+                Intent(applicationContext, LocationService::class.java).apply {
+                    action = LocationService.ACTION_STOP
+                    startService(this)
+                }
+
+                runOnUiThread {
+                    Toast.makeText(context,"Desconectado ",Toast.LENGTH_SHORT).show()
+                }
                 Log.d(TAG, "Connection lost ${cause.toString()}")
 
             }
@@ -191,8 +231,8 @@ class tela_filho : AppCompatActivity() {
             }
         })
         val options = MqttConnectOptions()
-        options.userName = "TrabalhoSD"
-        options.password = "Maltar123".toCharArray()
+        options.userName = username
+        options.password = password.toCharArray()
         try {
             mqttClient.connect(options, null, object : IMqttActionListener {
                 override fun onSuccess(asyncActionToken: IMqttToken?) {
@@ -308,6 +348,10 @@ class tela_filho : AppCompatActivity() {
                 override fun onSuccess(asyncActionToken: IMqttToken?) {
                     Log.d(TAG, "Disconnected")
                     flagconect=0
+                    loc1=-1.0
+                    loc2=-1.0
+                    loc2Amigo=-1.0
+                    loc1Amigo=-1.0
                     exibirTopico.text="Seu CPF:"
                     self_coords.text = "Suas coordenadas:"
                     exibirTopicoAmigo.text="CPF do seu amigo:"
