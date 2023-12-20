@@ -14,17 +14,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         filho=findViewById(R.id.filho)
-        pai=findViewById(R.id.pai)
-        pai.setOnClickListener{
-
-            try {
-                telaPai()
-            }catch (e:Exception){
-                e.printStackTrace()
-            }
-
-
-        }
         filho.setOnClickListener{
 
             telaFilho()

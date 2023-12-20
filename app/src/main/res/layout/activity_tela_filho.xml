@@ -7,30 +7,42 @@
     tools:context=".tela_filho">
 
     <TextView
-        android:id="@+id/altitude"
-        android:layout_width="280dp"
+        android:id="@+id/Friend_coords"
+        android:layout_width="380dp"
         android:layout_height="33dp"
-        android:text="Altitude:"
+        android:text="Coordenadas do seu amigo:"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.19"
+        app:layout_constraintHorizontal_bias="0.806"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.118" />
+        app:layout_constraintVertical_bias="0.193" />
 
     <TextView
-        android:id="@+id/longitude"
-        android:layout_width="280dp"
-        android:layout_height="0dp"
+        android:id="@+id/Self_coords"
+        android:layout_width="380dp"
+        android:layout_height="30dp"
         android:layout_marginTop="26dp"
         android:layout_marginBottom="496dp"
-        android:text="Longitude:"
+        android:text="Suas coordenadas:"
         app:layout_constraintBottom_toTopOf="@+id/botaoMapaFilho"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.19"
+        app:layout_constraintHorizontal_bias="0.806"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.037" />
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/botaoDesconecta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Desligar rastreamento"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.524"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.872" />
 
     <Button
         android:id="@+id/botaoConecta"
@@ -38,24 +50,60 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:text="Conectar ao tópico"
+        android:text="Ligar rastreamento"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.522"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.603" />
+        app:layout_constraintVertical_bias="0.751" />
+
+    <TextView
+        android:id="@+id/textoExibirTopico_self"
+        android:layout_width="380dp"
+        android:layout_height="33dp"
+        android:text="Seu CPF:"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.806"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.103" />
+
+    <TextView
+        android:id="@+id/textoExibirTopico_amigo"
+        android:layout_width="380dp"
+        android:layout_height="33dp"
+        android:text="CPF do seu amigo:"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.806"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.262" />
+
+    <TextView
+        android:id="@+id/ExibirDistancia"
+        android:layout_width="380dp"
+        android:layout_height="33dp"
+        android:text="Seu amigo está a X quilômetros de distância"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.806"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.365" />
 
     <TextView
         android:id="@+id/textoPadrao1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Insira seu tópico"
+        android:text="Insira seu CPF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.382" />
+        app:layout_constraintVertical_bias="0.426" />
 
     <EditText
         android:id="@+id/textoTopico"
@@ -68,41 +116,43 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.456" />
+        app:layout_constraintVertical_bias="0.491" />
 
     <TextView
-        android:id="@+id/textoExibirTopico"
-        android:layout_width="280dp"
-        android:layout_height="33dp"
-        android:text="Tópico:"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.19"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.209" />
-
-    <Button
-        android:id="@+id/botaoDesconecta"
+        android:id="@+id/textoPadrao"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Desconectar do tópico"
+        android:text="insira o  CPF do seu amigo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.588" />
+
+    <EditText
+        android:id="@+id/textoTopico_amigo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.713" />
+        app:layout_constraintVertical_bias="0.654" />
 
     <Button
         android:id="@+id/botaoMapaFilho"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="36dp"
-        android:layout_marginBottom="128dp"
         android:text="Ver mapa"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/botaoDesconecta"
-        app:layout_constraintTop_toBottomOf="@+id/longitude" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.578"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.976" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

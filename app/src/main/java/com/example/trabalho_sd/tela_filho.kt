@@ -1,11 +1,13 @@
 package com.example.trabalho_sd
 
 import android.Manifest
+import kotlin.math.*
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Geocoder
+import java.text.DecimalFormat
 import android.location.Location
 import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
@@ -30,47 +32,59 @@ import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.lang.Math.sin
 import java.util.Locale
-import kotlin.math.log
 
 private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-private lateinit var lat: TextView
-private lateinit var long: TextView
+private lateinit var friend_coords: TextView
+private lateinit var self_coords: TextView
 public lateinit var topico: EditText
+public lateinit var topicoAmigo: EditText
 private lateinit var exibirTopico: TextView
+private lateinit var exibirTopicoAmigo: TextView
+private lateinit var exibirDistancia: TextView
 private lateinit var botaoConecta: Button
 private lateinit var botaoDesconecta: Button
 private lateinit var botaoMapaFilho: Button
-var loc1: Double = 10.0
-var loc2: Double = 20.0
+var loc1: Double = -1.0
+var loc2: Double = -1.0
+var loc1Amigo: Double = -1.0
+var loc2Amigo: Double = -1.0
 private  var flagconect=0
 var PERMISSION_ID=1010
 private lateinit var mqttClient: MqttAndroidClient
 private  var TAG="mqtt"
-private  lateinit var valtopico: String
+private  lateinit var valtopico_self: String
+private  lateinit var valtopico_amigo: String
 
 class tela_filho : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tela_filho)
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        lat = findViewById(R.id.altitude)
-        long = findViewById(R.id.longitude)
+        friend_coords = findViewById(R.id.Friend_coords)
+        self_coords = findViewById(R.id.Self_coords)
         topico = findViewById(R.id.textoTopico)
-        exibirTopico = findViewById(R.id.textoExibirTopico)
+        topicoAmigo = findViewById(R.id.textoTopico_amigo)
+        exibirTopico = findViewById(R.id.textoExibirTopico_self)
+        exibirTopicoAmigo = findViewById(R.id.textoExibirTopico_amigo)
+        exibirDistancia = findViewById(R.id.ExibirDistancia)
         botaoConecta = findViewById(R.id.botaoConecta)
         botaoDesconecta = findViewById(R.id.botaoDesconecta)
         botaoMapaFilho = findViewById(R.id.botaoMapaFilho)
+
+        checkPermission()
         botaoConecta.setOnClickListener {
             if (flagconect == 1) {
                 Toast.makeText(
                     this,
-                    "Desconecte antes de conectar outro tópico",
+                    "Desconecte antes de se conectar novamente",
                     Toast.LENGTH_SHORT
                 ).show()
-            } else if (topico.text.isEmpty()) {
-                Toast.makeText(this, "Insira um tópico antes", Toast.LENGTH_SHORT).show()
+            } else if (topico.text.isEmpty() || topicoAmigo.text.isEmpty()) {
+                Toast.makeText(this, "Insira os dois CPFs ", Toast.LENGTH_SHORT).show()
             } else {
+                checkPermission()
                 connect(this)
                 EventBus.getDefault().register(this)
                 Intent(applicationContext, LocationService::class.java).apply {
@@ -83,6 +97,7 @@ class tela_filho : AppCompatActivity() {
         }
         botaoDesconecta.setOnClickListener {
             if (flagconect == 1) {
+                unsubscribe(""+topicoAmigo)
                 disconnect(this)
                 EventBus.getDefault().unregister(this)
                 Intent(applicationContext, LocationService::class.java).apply {
@@ -90,7 +105,7 @@ class tela_filho : AppCompatActivity() {
                     startService(this)
                 }
             } else {
-                Toast.makeText(this, "nenhum tópico conectado", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Já desconectado", Toast.LENGTH_SHORT).show()
 
             }
 
@@ -103,7 +118,7 @@ class tela_filho : AppCompatActivity() {
 
 
             } else {
-                Toast.makeText(this, "nenhum tópico conectado", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "nenhum CPF inserido", Toast.LENGTH_SHORT).show()
             }
 
         }
@@ -119,14 +134,20 @@ class tela_filho : AppCompatActivity() {
 
     fun onEvent(result: ResultData) {
         runOnUiThread {
-            lat.text = "Latitude: " + result.lat
-            long.text = "Longitude: " + result.long
+
+            self_coords.text = "Suas coordenadas: (" + result.lat+"," + result.long+")"
             loc1 = result.lat.toDouble()
             loc2 = result.long.toDouble()
             Log.d(TAG, "" + topico.text)
-            publish(valtopico, "" + result.lat + "," + result.long)
+            exibirTopico.text = "Seu CPF: " + valtopico_self
+            publish(valtopico_self, "" + result.lat + "," + result.long,2)
+            if(loc1Amigo!=-1.0 && loc2Amigo!=-1.0){
+                val txt2=calculateDistance(loc1,loc2, loc1Amigo, loc2Amigo)
+                exibirDistancia.text="Seu amigo está a "+txt2+" quilômetros de distância"
+            }
         }
     }
+
 
     fun connect(context: Context) { //não mudie nada e funcinou kkkkk
         val serverURI = "ssl://e59f8ed61b8e47abb5e1752437996eda.s2.eu.hivemq.cloud:8883"
@@ -135,6 +156,19 @@ class tela_filho : AppCompatActivity() {
         mqttClient.setCallback(object : MqttCallback {
             override fun messageArrived(topic: String?, message: MqttMessage?) {
                 recCount = recCount + 1
+                val txt=""+message
+                if(topic == ""+valtopico_amigo){
+                    friend_coords.text = "Coordenadas do seu amigo:("+message+")"
+                    exibirTopicoAmigo.text = "CPF do seu amigo: " + valtopico_amigo
+                    val values = txt.split(",")
+                    loc1Amigo=values[0].toDouble()
+                    loc2Amigo=values[1].toDouble()
+                    if(loc1!=-1.0 && loc2!=-1.0){
+                        val txt2=calculateDistance(loc1,loc2, loc1Amigo, loc2Amigo)
+                        exibirDistancia.text="Seu amigo está a "+txt2+" quilômetros de distância"
+                    }
+
+                }
                 Log.d(TAG, "Received message ${recCount}: ${message.toString()} from topic: $topic")
             }
 
@@ -156,10 +190,15 @@ class tela_filho : AppCompatActivity() {
                     runOnUiThread {
                         Log.d(TAG, "Connection success")
                         flagconect = 1
-                        subscribe("" + topico.text)
-                        exibirTopico.text = "Tópico: " + topico.text
-                        valtopico = "" + topico.text
+                        subscribe("" + topico.text,2)
+                        exibirTopico.text = "Seu CPF: " + topico.text
+                        valtopico_self = "" + topico.text
                         topico.setText("")
+                        subscribe(""+topicoAmigo.text,2)
+                        exibirTopicoAmigo.text="CPF do seu amigo: "+topicoAmigo.text
+                        valtopico_amigo = "" + topicoAmigo.text
+                        topicoAmigo.setText("")
+                        friend_coords.text = "Coordenadas do seu amigo: Aguardando chegada"
                         Toast.makeText(context, "conexão feita com sucesso", Toast.LENGTH_SHORT)
                             .show()
                         RequestPermission()
@@ -261,11 +300,16 @@ class tela_filho : AppCompatActivity() {
                 override fun onSuccess(asyncActionToken: IMqttToken?) {
                     Log.d(TAG, "Disconnected")
                     flagconect=0
-                    exibirTopico.text="Tópico: "
-                    lat.text="Latitude: "
-                    long.text="Longitude: "
+                    exibirTopico.text="Seu CPF:"
+                    self_coords.text = "Suas coordenadas:"
+                    exibirTopicoAmigo.text="CPF do seu amigo:"
+                    friend_coords.text = "Coordenadas do seu amigo:"
 
-                    Toast.makeText(context,"Desconectado com sucessso",Toast.LENGTH_SHORT).show()
+                    runOnUiThread {
+                        Toast.makeText(context,"Desconectado com sucessso",Toast.LENGTH_SHORT).show()
+                    }
+
+
 
                 }
 
@@ -287,7 +331,7 @@ class tela_filho : AppCompatActivity() {
                 != PackageManager.PERMISSION_GRANTED)
     }
     @SuppressLint("MissingPermission")
-    private fun getLastLocation(){
+    /*private fun getLastLocation(){
         if(checkPermission()){
             if(isLocationEnabled()){
                 fusedLocationProviderClient.lastLocation.addOnCompleteListener {task->
@@ -296,8 +340,7 @@ class tela_filho : AppCompatActivity() {
                         Toast.makeText(this,"Localização nula",Toast.LENGTH_SHORT).show()
                     }else{
                         Log.d("Debug:" ,"Your Location:"+ location.longitude)
-                        lat.text = "Latitude: "+ location.latitude
-                        long.text = "Longitude: "+ location.longitude
+
                         publish(""+topico.text,""+location.latitude+","+location.longitude)
                     }
                 }
@@ -307,7 +350,7 @@ class tela_filho : AppCompatActivity() {
         }else{
             RequestPermission()
         }
-    }
+    }*/
 
     /*private fun getCityName(lat: Double,long: Double):String{
         var cityName:String = ""
@@ -370,5 +413,33 @@ class tela_filho : AppCompatActivity() {
                 Log.d("Debug:","deu certo")
             }
         }
+    }
+    data class Location(val latitude: Double, val longitude: Double)
+
+    fun haversineDistance(point1: Location, point2: Location): Double {
+        val R = 6371.0 // raio médio da Terra em quilômetros
+
+        val lat1 = Math.toRadians(point1.latitude)
+        val lon1 = Math.toRadians(point1.longitude)
+        val lat2 = Math.toRadians(point2.latitude)
+        val lon2 = Math.toRadians(point2.longitude)
+
+        val dLat = lat2 - lat1
+        val dLon = lon2 - lon1
+
+        val a = sin(dLat / 2).pow(2) + cos(lat1) * cos(lat2) * sin(dLon / 2).pow(2)
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+        return R * c
+    }
+
+    fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): String {
+        val point1 = Location(lat1, lon1)
+        val point2 = Location(lat2, lon2)
+        val distance = haversineDistance(point1, point2)
+
+        // Formata o resultado com duas casas decimais
+        val decimalFormat = DecimalFormat("#.##")
+        return decimalFormat.format(distance)
     }
 }
