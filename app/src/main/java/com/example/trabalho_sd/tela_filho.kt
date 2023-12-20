@@ -113,10 +113,12 @@ class tela_filho : AppCompatActivity() {
 
         botaoMapaFilho.setOnClickListener {
             if (flagconect == 1) {
-
+                if(loc1Amigo!=-1.0 && loc2Amigo!=-1.0 && loc1!=-1.0 && loc2!=-1.0){
                     telaMapa()
+                }else{
+                    Toast.makeText(this, "Espere as localizações carregarem", Toast.LENGTH_SHORT).show()
 
-
+                }
             } else {
                 Toast.makeText(this, "nenhum CPF inserido", Toast.LENGTH_SHORT).show()
             }
@@ -135,11 +137,16 @@ class tela_filho : AppCompatActivity() {
     fun onEvent(result: ResultData) {
         runOnUiThread {
 
-            self_coords.text = "Suas coordenadas: (" + result.lat+"," + result.long+")"
+            self_coords.text = "Suas coordenadas:\n(" + result.lat+"," + result.long+")"
             loc1 = result.lat.toDouble()
             loc2 = result.long.toDouble()
             Log.d(TAG, "" + topico.text)
             exibirTopico.text = "Seu CPF: " + valtopico_self
+            if(loc1Amigo!=-1.0 && loc2Amigo!=-1.0){
+                exibirTopicoAmigo.text = "CPF do seu amigo: " + valtopico_amigo
+                friend_coords.text = "Coordenadas do seu amigo:\n("+ loc1Amigo+","+ loc2Amigo+")"
+            }
+
             publish(valtopico_self, "" + result.lat + "," + result.long,2)
             if(loc1Amigo!=-1.0 && loc2Amigo!=-1.0){
                 val txt2=calculateDistance(loc1,loc2, loc1Amigo, loc2Amigo)
@@ -158,8 +165,10 @@ class tela_filho : AppCompatActivity() {
                 recCount = recCount + 1
                 val txt=""+message
                 if(topic == ""+valtopico_amigo){
-                    friend_coords.text = "Coordenadas do seu amigo:("+message+")"
+                    friend_coords.text = "Coordenadas do seu amigo:\n("+message+")"
                     exibirTopicoAmigo.text = "CPF do seu amigo: " + valtopico_amigo
+                    exibirTopico.text = "Seu CPF: " + valtopico_self
+                    self_coords.text = "Suas coordenadas:\n(" + loc1+"," + loc2+")"
                     val values = txt.split(",")
                     loc1Amigo=values[0].toDouble()
                     loc2Amigo=values[1].toDouble()
@@ -198,7 +207,7 @@ class tela_filho : AppCompatActivity() {
                         exibirTopicoAmigo.text="CPF do seu amigo: "+topicoAmigo.text
                         valtopico_amigo = "" + topicoAmigo.text
                         topicoAmigo.setText("")
-                        friend_coords.text = "Coordenadas do seu amigo: Aguardando chegada"
+                        friend_coords.text = "Coordenadas do seu amigo:\nAguardando chegada"
                         Toast.makeText(context, "conexão feita com sucesso", Toast.LENGTH_SHORT)
                             .show()
                         RequestPermission()
