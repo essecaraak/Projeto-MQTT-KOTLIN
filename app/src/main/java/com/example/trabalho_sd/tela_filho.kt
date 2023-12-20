@@ -12,6 +12,7 @@ import android.location.Location
 import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
@@ -80,7 +81,6 @@ class tela_filho : AppCompatActivity() {
         botaoMapaFilho = findViewById(R.id.botaoMapaFilho)
         textUser = findViewById(R.id.textoUser)
         botaoUser = findViewById(R.id.botaoUser)
-
         checkPermission()
         botaoConecta.setOnClickListener {
             if (flagconect == 1) {
@@ -381,43 +381,41 @@ class tela_filho : AppCompatActivity() {
             e.printStackTrace()
         }
     }
-    private fun checkPermission(){
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
-                PERMISSION_ID)
+    private fun checkPermission() {
+        val permissions = arrayOf(
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.INTERNET,
+            Manifest.permission.FOREGROUND_SERVICE,
+            Manifest.permission.POST_NOTIFICATIONS,
+            Manifest.permission.WAKE_LOCK,
+            Manifest.permission.ACCESS_NETWORK_STATE
+        )
+
+        val permissionsToRequest = mutableListOf<String>()
+
+        for (permission in permissions) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(permission)
+            }
         }
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                PERMISSION_ID)
+
+        if (permissionsToRequest.isNotEmpty()) {
+            ActivityCompat.requestPermissions(this, permissionsToRequest.toTypedArray(), PERMISSION_ID)
         }
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
-            != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.INTERNET),
-                PERMISSION_ID)
-        }
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE)
-            != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.FOREGROUND_SERVICE),
-                PERMISSION_ID)
-        }
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-            != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                PERMISSION_ID)
-        }
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.WAKE_LOCK)
-            != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WAKE_LOCK),
-                PERMISSION_ID)
-        }
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE)
-            != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_NETWORK_STATE),
-                PERMISSION_ID)
+
+        // Verifica o status do GPS
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+
+        if (!isGpsEnabled) {
+            // GPS está desativado, você pode exibir um diálogo ou uma mensagem para incentivar o usuário a ativá-lo
+            // Por exemplo, você pode abrir as configurações de localização usando Intent
+            val settingsIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+            startActivity(settingsIntent)
         }
     }
+
     @SuppressLint("MissingPermission")
     /*private fun getLastLocation(){
         if(checkPermission()){
