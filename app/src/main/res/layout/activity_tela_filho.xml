@@ -8,38 +8,38 @@
 
     <TextView
         android:id="@+id/Friend_coords"
-        android:layout_width="352dp"
-        android:layout_height="32dp"
+        android:layout_width="380dp"
+        android:layout_height="33dp"
         android:text="Coordenadas do seu amigo:"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.78"
+        app:layout_constraintHorizontal_bias="0.806"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.18" />
+        app:layout_constraintVertical_bias="0.181" />
 
     <TextView
         android:id="@+id/textoExibirTopico_amigo"
-        android:layout_width="357dp"
-        android:layout_height="28dp"
+        android:layout_width="380dp"
+        android:layout_height="33dp"
         android:text="CPF do seu amigo:"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.916"
+        app:layout_constraintHorizontal_bias="0.806"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.252" />
+        app:layout_constraintVertical_bias="0.237" />
 
     <TextView
         android:id="@+id/Self_coords"
-        android:layout_width="357dp"
-        android:layout_height="32dp"
+        android:layout_width="380dp"
+        android:layout_height="33dp"
         android:layout_marginTop="26dp"
         android:layout_marginBottom="496dp"
         android:text="Suas coordenadas:"
         app:layout_constraintBottom_toTopOf="@+id/botaoMapaFilho"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.916"
+        app:layout_constraintHorizontal_bias="0.806"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
@@ -72,27 +72,27 @@
 
     <TextView
         android:id="@+id/textoExibirTopico_self"
-        android:layout_width="358dp"
+        android:layout_width="380dp"
         android:layout_height="33dp"
         android:text="Seu CPF:"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.942"
+        app:layout_constraintHorizontal_bias="0.806"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.092" />
+        app:layout_constraintVertical_bias="0.094" />
 
     <TextView
         android:id="@+id/ExibirDistancia"
-        android:layout_width="350dp"
+        android:layout_width="380dp"
         android:layout_height="33dp"
         android:text="Seu amigo está a X quilômetros de distância"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.767"
+        app:layout_constraintHorizontal_bias="0.806"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.364" />
+        app:layout_constraintVertical_bias="0.365" />
 
     <TextView
         android:id="@+id/textoPadrao1"
